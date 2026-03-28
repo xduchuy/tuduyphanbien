@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản Đồ Tư Duy Phản Biện & Nhận Diện Ngụy Biện</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#1E3A8A',
+secondary: '#EA580C',
+accent: '#FACC15',
+dark: '#0F172A',
+light: '#F8FAFC',
+info: '#06B6D4',
+success: '#10B981',
+danger: '#E11D48'
+},
+fontFamily: {
+sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+}
+}
+}
+}
+</script>
+<style>
+body { background-color: #F8FAFC; color: #0F172A; }
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+.animate-blob {
+  animation: blob 7s infinite;
+}
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+@keyframes gradient-x {
+  0%, 100% {
+      background-size: 200% 200%;
+      background-position: left center;
+  }
+  50% {
+      background-size: 200% 200%;
+      background-position: right center;
+  }
+}
+.animate-gradient-x {
+  animation: gradient-x 15s ease infinite;
+}
+.glass-panel {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.chart-container {
+position: relative;
+width: 100%;
+max-width: 700px;
+margin-left: auto;
+margin-right: auto;
+height: 40vh;
+max-height: 450px;
+}
+@media (min-width: 768px) {
+.chart-container { height: 400px; }
+}
+.material-card {
+background-color: white;
+border-radius: 0.75rem;
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+padding: 1.5rem;
+transition: box-shadow 0.3s ease;
+}
+.material-card:hover {
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.pyramid-level {
+margin: 0.25rem auto;
+text-align: center;
+color: white;
+font-weight: bold;
+border-radius: 0.5rem;
+padding: 0.75rem;
+transition: transform 0.2s;
+}
+.pyramid-level:hover { transform: scale(1.05); }
+.level-6 { width: 100%; background-color: #1E3A8A; }
+.level-5 { width: 85%; background-color: #0369A1; }
+.level-4 { width: 70%; background-color: #0284C7; }
+.level-3 { width: 55%; background-color: #0EA5E9; }
+.level-2 { width: 40%; background-color: #38BDF8; }
+.level-1 { width: 25%; background-color: #7DD3FC; color: #0F172A; }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- Palette: Vibrant Blue & Orange (Energetic) | NO SVG, NO MERMAID JS USED -->
+<!-- Plan: 1. Intro -> 2. Foundations (Paul-Elder & Bloom) -> 3. Tools (5W1H & Socrates) -> 4. Pitfalls (Fallacies) -> 5. Impact. -->
+<!-- Choices: 1. Donut (Chart.js) for Paul-Elder (Composition). 2. HTML Pyramid for Bloom (Hierarchy, NO SVG). 3. Radar (Chart.js) for Socrates (Multi-axis). 4. Bar (Chart.js) for Fallacies (Comparison). 5. ScatterGL (Plotly) for Impact (Relationship, Canvas/WebGL). Confirming NO SVG used. -->
+
+<header class="relative bg-gradient-to-br from-slate-900 via-primary to-blue-900 text-white py-24 px-4 shadow-2xl text-center overflow-hidden animate-gradient-x">
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[80px] opacity-40 animate-blob"></div>
+<div class="absolute top-1/2 -right-24 w-96 h-96 bg-info rounded-full mix-blend-screen filter blur-[80px] opacity-40 animate-blob animation-delay-2000"></div>
+<div class="absolute -bottom-32 left-1/2 transform -translate-x-1/2 w-[800px] h-[400px] bg-secondary rounded-full mix-blend-screen filter blur-[100px] opacity-20 animate-blob"></div>
+</div>
+<div class="relative z-10 max-w-5xl mx-auto glass-panel p-10 md:p-16 rounded-3xl mt-4 border-t border-l border-white/20">
+<div class="inline-block mb-6 px-5 py-2 rounded-full border border-info/50 bg-info/10 text-cyan-200 text-sm font-bold tracking-widest uppercase backdrop-blur-md shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+🌟 Khám Phá Sức Mạnh Trí Tuệ
+</div>
+<h1 class="text-5xl md:text-7xl font-black mb-8 uppercase tracking-tight text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+Tư Duy Phản Biện <br class="hidden md:block"/><span class="text-transparent bg-clip-text bg-gradient-to-r from-info to-blue-200">&</span> Ngụy Biện
+</h1>
+<p class="text-xl md:text-2xl text-blue-100/90 max-w-4xl mx-auto leading-relaxed font-light drop-shadow-md">
+Hành trình giải phóng sức mạnh trí óc, phân tích dữ liệu đa chiều và xây dựng <strong class="text-white font-semibold">lá chắn vững chắc</strong> trước thông tin sai lệch trong kỷ nguyên số.
+</p>
+</div>
+</header>
+
+<main class="container mx-auto px-4 py-8 space-y-12">
+
+<section id="introduction" class="material-card border-l-4 border-secondary">
+<h2 class="text-2xl font-bold text-primary mb-4">🧠 Tư Duy Phản Biện (Critical Thinking) Là Gì?</h2>
+<p class="text-base leading-relaxed mb-4">
+Tư duy phản biện là quá trình chủ động phân tích, đánh giá và tổng hợp thông tin một cách logic và khách quan để đưa ra quyết định. Nó không phải là việc chỉ trích mù quáng, mà là nghệ thuật đặt câu hỏi đúng, nhận diện các góc nhìn khác nhau và tránh bị thao túng bởi cảm xúc hay định kiến.
+</p>
+<p class="text-base leading-relaxed">
+Trong thời đại bùng nổ của Trí tuệ Nhân tạo (AI) và tin giả (fake news), đây được coi là <strong>"hệ miễn dịch"</strong> quan trọng nhất giúp con người tồn tại, sáng tạo và làm chủ thông tin.
+</p>
+</section>
+
+<section id="foundations" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="material-card">
+<h3 class="text-xl font-bold text-primary mb-3">Khung Tư Duy Paul-Elder <sup class="text-xs text-blue-500 hover:text-blue-700 transition-colors"><a href="#refs">[1]</a></sup></h3>
+<p class="text-sm mb-6 text-gray-600">Mô hình phân tích sự cấu thành của tư duy phản biện dựa trên 3 trụ cột cốt lõi. Sự cân bằng giữa các yếu tố này tạo nên một nhà tư tưởng sắc bén.</p>
+<div class="chart-container">
+<canvas id="paulElderChart"></canvas>
+</div>
+<p class="text-sm mt-4 text-center italic text-gray-500">Biểu đồ thể hiện số lượng các tiêu chí thành phần trong mỗi trụ cột của mô hình Paul-Elder.</p>
+</div>
+
+<div class="material-card flex flex-col justify-between">
+<h3 class="text-xl font-bold text-primary mb-3">Thang Đo Nhận Thức Bloom <sup class="text-xs text-blue-500 hover:text-blue-700 transition-colors"><a href="#refs">[2]</a></sup></h3>
+<p class="text-sm mb-6 text-gray-600">Hệ thống 6 cấp độ phân loại nhận thức, từ việc tiếp nhận thông tin thụ động (đáy) đến tư duy độc lập và tạo ra giá trị mới (đỉnh).</p>
+<div class="flex-grow flex flex-col justify-end w-full max-w-md mx-auto pb-4">
+<div class="pyramid-level level-1">Sáng tạo</div>
+<div class="pyramid-level level-2">Đánh giá</div>
+<div class="pyramid-level level-3">Phân tích</div>
+<div class="pyramid-level level-4">Áp dụng</div>
+<div class="pyramid-level level-5">Hiểu</div>
+<div class="pyramid-level level-6">Ghi nhớ (Nền tảng)</div>
+</div>
+<p class="text-sm mt-4 text-center italic text-gray-500">Tháp phân cấp tư duy: Càng lên cao, đòi hỏi năng lực phản biện càng phức tạp.</p>
+</div>
+</section>
+
+<section id="tools" class="space-y-8">
+<div class="material-card">
+<h2 class="text-2xl font-bold text-primary mb-4">🛠 Các Công Cụ Phân Tích & Truy Vấn Thực Chiến</h2>
+<p class="text-base mb-8">Việc áp dụng các mô hình đặt câu hỏi hệ thống giúp chúng ta bóc tách vấn đề một cách khách quan nhất, tránh bỏ sót các dữ kiện quan trọng chưa được làm rõ.</p>
+        
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+<div>
+<h3 class="text-lg font-bold text-secondary mb-3">Mô Hình Đặt Câu Hỏi Socrates <sup class="text-xs text-blue-500 hover:text-blue-700 transition-colors"><a href="#refs">[3]</a></sup></h3>
+<p class="text-sm mb-4 text-gray-600">Phương pháp vấn đáp liên hoàn 6 bước giúp bóc tách tư tưởng, phát hiện ngụy biện và hiểu sâu bản chất vấn đề.</p>
+<div class="chart-container">
+<canvas id="socratesChart"></canvas>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold text-secondary mb-3">Phân Tích Đa Chiều 5W1H <sup class="text-xs text-blue-500 hover:text-blue-700 transition-colors"><a href="#refs">[4]</a></sup></h3>
+<p class="text-sm mb-4 text-gray-600">Khung thông tin cơ bản giúp cấu trúc lại mọi tình huống phức tạp thành các mảng dữ liệu rõ ràng.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center">
+<div class="text-2xl mb-1">🎯</div>
+<div class="font-bold text-primary">WHAT (Cái gì?)</div>
+<div class="text-xs text-gray-600 mt-1">Xác định rõ vấn đề cốt lõi.</div>
+</div>
+<div class="bg-orange-50 p-4 rounded-lg border border-orange-100 text-center">
+<div class="text-2xl mb-1">❓</div>
+<div class="font-bold text-secondary">WHY (Tại sao?)</div>
+<div class="text-xs text-gray-600 mt-1">Tìm nguyên nhân gốc rễ.</div>
+</div>
+<div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100 text-center">
+<div class="text-2xl mb-1">👤</div>
+<div class="font-bold text-accent">WHO (Là ai?)</div>
+<div class="text-xs text-gray-600 mt-1">Chủ thể liên quan/chịu ảnh hưởng.</div>
+</div>
+<div class="bg-green-50 p-4 rounded-lg border border-green-100 text-center">
+<div class="text-2xl mb-1">⏱</div>
+<div class="font-bold text-success">WHEN (Khi nào?)</div>
+<div class="text-xs text-gray-600 mt-1">Bối cảnh thời gian cụ thể.</div>
+</div>
+<div class="bg-red-50 p-4 rounded-lg border border-red-100 text-center">
+<div class="text-2xl mb-1">📍</div>
+<div class="font-bold text-danger">WHERE (Ở đâu?)</div>
+<div class="text-xs text-gray-600 mt-1">Không gian/môi trường xảy ra.</div>
+</div>
+<div class="bg-cyan-50 p-4 rounded-lg border border-cyan-100 text-center">
+<div class="text-2xl mb-1">⚙️</div>
+<div class="font-bold text-info">HOW (Thế nào?)</div>
+<div class="text-xs text-gray-600 mt-1">Phương thức hoạt động/Giải pháp.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="fallacies" class="material-card">
+<h2 class="text-2xl font-bold text-primary mb-4">⚠️ Nhận Diện Cạm Bẫy Ngụy Biện (Logical Fallacies) <sup class="text-xs text-blue-500 hover:text-blue-700 transition-colors"><a href="#refs">[5]</a></sup></h2>
+<p class="text-base mb-6">Ngụy biện là những lỗi sai trong lập luận logic, thường được sử dụng một cách vô tình hoặc cố ý để thao túng người nghe. Việc nhận diện và phân loại chúng giúp bạn bảo vệ lập trường của mình.</p>
+<div class="chart-container" style="max-width: 900px; height: 50vh;">
+<canvas id="fallaciesChart"></canvas>
+</div>
+<p class="text-sm mt-6 p-4 bg-gray-50 rounded text-gray-700">
+<strong>Lưu ý:</strong> Một cuộc tranh luận văn minh (như phương pháp Socrates) yêu cầu người tham gia tập trung vào <em>Luận điểm</em> và <em>Bằng chứng</em>, tuyệt đối tránh việc sử dụng các ngụy biện như Tấn công cá nhân (Ad hominem) hay Đánh lạc hướng (Cá trích đỏ).
+</p>
+</section>
+
+<section id="impact" class="material-card border-t-4 border-success">
+<h2 class="text-2xl font-bold text-primary mb-4">🚀 Tác Động Của Việc Rèn Luyện Tư Duy</h2>
+<p class="text-base mb-6">Đầu tư vào tư duy phản biện không mang lại kết quả ngay tức thì, nhưng theo thời gian, nó tạo ra sự tăng trưởng vượt bậc về năng lực giải quyết vấn đề và miễn nhiễm với các quyết định cảm tính.</p>
+<div class="chart-container w-full" id="impactChart"></div>
+<p class="text-sm mt-4 text-center italic text-gray-500">Biểu đồ phân tán (ScatterGL) mô phỏng mối tương quan giữa tần suất rèn luyện và độ nhạy bén trong phân tích dữ liệu.</p>
+</section>
+
+<section id="refs" class="material-card border-t-4 border-blue-400">
+<h2 class="text-2xl font-bold text-primary mb-6 flex items-center"><span class="mr-2">📚</span> Nguồn Dẫn Chứng & Tài Liệu Khoa Học</h2>
+<div class="bg-blue-50/50 p-6 rounded-xl border border-blue-100">
+<ul class="space-y-4 text-sm text-gray-700 list-none">
+    <li class="flex items-start">
+        <span class="font-bold text-blue-600 mr-2">[1]</span>
+        <div>
+            <strong class="text-gray-900 text-base">Mô hình Tư duy Paul-Elder:</strong> Phát triển bởi TS. Richard Paul và TS. Linda Elder (Foundation for Critical Thinking).<br/>
+            <cite class="text-gray-500 italic block mt-1">Nguồn: Paul, R., & Elder, L. (2006). The Miniature Guide to Critical Thinking Concepts and Tools. Foundation for Critical Thinking.</cite>
+        </div>
+    </li>
+    <li class="flex items-start border-t border-blue-100/50 pt-4">
+        <span class="font-bold text-blue-600 mr-2">[2]</span>
+        <div>
+            <strong class="text-gray-900 text-base">Thang đo Nhận thức Bloom (Bản hiệu chỉnh 2001):</strong> Phiên bản đưa "Sáng tạo" lên đỉnh tháp, điều chỉnh từ nguyên bản 1956 của Benjamin Bloom.<br/>
+            <cite class="text-gray-500 italic block mt-1">Nguồn: Anderson, L. W., & Krathwohl, D. R. (2001). A taxonomy for learning, teaching, and assessing: A revision of Bloom's taxonomy of educational objectives. New York: Longman.</cite>
+        </div>
+    </li>
+    <li class="flex items-start border-t border-blue-100/50 pt-4">
+        <span class="font-bold text-blue-600 mr-2">[3]</span>
+        <div>
+            <strong class="text-gray-900 text-base">6 Loại Câu hỏi Socrates:</strong> Hệ thống hóa dựa trên phương pháp vấn đáp của triết gia Socrates, ứng dụng trong giáo dục hiện đại.<br/>
+            <cite class="text-gray-500 italic block mt-1">Nguồn: Paul, R., & Elder, L. (2006). The Thinker's Guide to the Art of Socratic Questioning. Foundation for Critical Thinking.</cite>
+        </div>
+    </li>
+    <li class="flex items-start border-t border-blue-100/50 pt-4">
+        <span class="font-bold text-blue-600 mr-2">[4]</span>
+        <div>
+            <strong class="text-gray-900 text-base">Khung Phân Tích 5W1H:</strong> Hình thành từ các yếu tố hoàn cảnh của Aristotle, phổ biến qua tác phẩm của Rudyard Kipling (1902).<br/>
+            <cite class="text-gray-500 italic block mt-1">Nguồn: Kipling, R. (1902). Just So Stories. Macmillan & Co. & Lý thuyết Báo chí học cơ bản.</cite>
+        </div>
+    </li>
+    <li class="flex items-start border-t border-blue-100/50 pt-4">
+        <span class="font-bold text-blue-600 mr-2">[5]</span>
+        <div>
+            <strong class="text-gray-900 text-base">Ngụy biện Logic (Logical Fallacies):</strong> Đúc kết từ nền tảng Logic học phương Tây cổ điển.<br/>
+            <cite class="text-gray-500 italic block mt-1">Nguồn: Dựa trên công trình nền tảng "De Sophisticis Elenchis" (Aristotle) và các chuẩn mực Logic học Hình thức (Formal Logic).</cite>
+        </div>
+    </li>
+</ul>
+</div>
+</section>
+
+</main>
+
+<footer class="bg-dark text-white py-8 text-center mt-8">
+<p class="text-sm">Bản Đồ Trực Quan dựa trên Nền Tảng Lý Thuyết Tư Duy Phản Biện | SPA Infographic</p>
+<p class="text-xs text-gray-400 mt-2">Bao gồm phân tích về Socrates, 5W1H, Thang đo Bloom và Khung Paul-Elder.</p>
+</footer>
+
+<script>
+function wrapLabel(label) {
+if (label.length <= 16) return label;
+const words = label.split(' ');
+let lines = [];
+let currentLine = '';
+words.forEach(word => {
+if ((currentLine + word).length > 16) {
+if(currentLine) lines.push(currentLine.trim());
+currentLine = word + ' ';
+} else {
+currentLine += word + ' ';
+}
+});
+if (currentLine) lines.push(currentLine.trim());
+return lines;
+}
+
+const tooltipConfig = {
+tooltip: {
+callbacks: {
+title: function(tooltipItems) {
+const item = tooltipItems[0];
+let label = item.chart.data.labels[item.dataIndex];
+if (Array.isArray(label)) {
+return label.join(' ');
+} else {
+return label;
+}
+}
+}
+}
+};
+
+const paulElderCtx = document.getElementById('paulElderChart').getContext('2d');
+new Chart(paulElderCtx, {
+type: 'doughnut',
+data: {
+labels: [
+'Tiêu chuẩn Trí tuệ (Intellectual Standards)',
+'Yếu tố Lập luận (Elements of Reasoning)',
+'Đặc điểm Trí tuệ (Intellectual Traits)'
+],
+datasets: [{
+data: [9, 8, 7],
+backgroundColor: ['#1E3A8A', '#EA580C', '#FACC15'],
+hoverOffset: 4
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: {
+...tooltipConfig,
+legend: { position: 'bottom' }
+}
+}
+});
+
+const socratesCtx = document.getElementById('socratesChart').getContext('2d');
+new Chart(socratesCtx, {
+type: 'radar',
+data: {
+labels: [
+wrapLabel('Làm rõ vấn đề'),
+wrapLabel('Thăm dò giả định'),
+wrapLabel('Tìm lý do & bằng chứng'),
+wrapLabel('Góc nhìn & Quan điểm'),
+wrapLabel('Hàm ý & Hệ quả'),
+wrapLabel('Bản chất câu hỏi')
+],
+datasets: [{
+label: 'Tần suất sử dụng thực tế',
+data: [9, 7, 10, 8, 8, 6],
+backgroundColor: 'rgba(6, 182, 212, 0.2)',
+borderColor: '#06B6D4',
+pointBackgroundColor: '#1E3A8A',
+borderWidth: 2
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+scales: {
+r: {
+beginAtZero: true,
+max: 10,
+ticks: { display: false }
+}
+},
+plugins: {
+...tooltipConfig,
+legend: { display: false }
+}
+}
+});
+
+const fallaciesCtx = document.getElementById('fallaciesChart').getContext('2d');
+new Chart(fallaciesCtx, {
+type: 'bar',
+data: {
+labels: [
+wrapLabel('Nhóm Tấn Công & Bôi Xấu Cá Nhân'),
+wrapLabel('Nhóm Lảng Tránh & Đánh Lạc Hướng'),
+wrapLabel('Nhóm Lợi Dụng Cảm Xúc & Đám Đông'),
+wrapLabel('Nhóm Lỗi Cấu Trúc & Logic Kém')
+],
+datasets: [{
+label: 'Số lượng lỗi ngụy biện thường gặp',
+data: [4, 5, 4, 7],
+backgroundColor: ['#E11D48', '#EA580C', '#FACC15', '#1E3A8A'],
+borderRadius: 6
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+scales: {
+y: {
+beginAtZero: true,
+title: { display: true, text: 'Số lượng' }
+}
+},
+plugins: {
+...tooltipConfig,
+legend: { display: false }
+}
+}
+});
+
+const scatterDataX = [];
+const scatterDataY = [];
+for (let i = 0; i < 50; i++) {
+const time = Math.random() * 100;
+const mastery = (time * 0.8) + (Math.random() * 20 - 10) + 10;
+scatterDataX.push(time);
+scatterDataY.push(mastery > 100 ? 100 : (mastery < 0 ? 0 : mastery));
+}
+
+const plotlyData = [{
+x: scatterDataX,
+y: scatterDataY,
+mode: 'markers',
+type: 'scattergl',
+marker: {
+size: 12,
+color: scatterDataY,
+colorscale: 'YlOrRd',
+showscale: true,
+line: { color: '#1E3A8A', width: 1 }
+},
+text: scatterDataX.map((x, i) => `Giờ rèn luyện: ${x.toFixed(1)}<br>Độ nhạy bén: ${scatterDataY[i].toFixed(1)}`),
+hoverinfo: 'text'
+}];
+
+const plotlyLayout = {
+margin: { t: 20, r: 20, b: 50, l: 50 },
+xaxis: { title: 'Thời gian rèn luyện & Phân tích (Đơn vị tương đối)' },
+yaxis: { title: 'Mức độ Nhạy bén / Miễn nhiễm Tin giả' },
+paper_bgcolor: 'rgba(0,0,0,0)',
+plot_bgcolor: 'rgba(248, 250, 252, 0.5)'
+};
+
+Plotly.newPlot('impactChart', plotlyData, plotlyLayout, {responsive: true, staticPlot: false});
+
+</script>
+</body>
+</html>
